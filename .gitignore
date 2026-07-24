@@ -1,5 +1,5 @@
 # Backend (Java/Maven)
-trendyol/target/
+**/target/
 trendyol/.mvn/wrapper/maven-wrapper.jar
 *.class
 
@@ -10,6 +10,7 @@ TrendyolFrontend/dist/
 # IDE
 .vscode/
 .idea/
+.vs/
 
 # İşletim sistemi
 .DS_Store
