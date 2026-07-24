@@ -1,0 +1,16 @@
+# Backend (Java/Maven)
+trendyol/target/
+trendyol/.mvn/wrapper/maven-wrapper.jar
+*.class
+
+# Frontend (Node/React)
+TrendyolFrontend/node_modules/
+TrendyolFrontend/dist/
+
+# IDE
+.vscode/
+.idea/
+
+# İşletim sistemi
+.DS_Store
+Thumbs.db
