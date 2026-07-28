@@ -7,3 +7,4 @@ export const getSiparis = (id) => axios.get(`${API_URL}/${id}`);
 export const createSiparis = (data) => axios.post(API_URL, data);
 export const updateSiparis = (id, data) => axios.put(`${API_URL}/${id}`, data);
 export const deleteSiparis = (id) => axios.delete(`${API_URL}/${id}`);
+export const searchSiparisler = (isim) => axios.get(`${API_URL}/ara`, { params: { isim } });

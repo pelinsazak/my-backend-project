@@ -55,6 +55,27 @@ public class TrendyolRepository {
         }
     }
 
+    public List<Trendyol> findByIsim(String isim) {
+    String sql = "SELECT id, musteri_adi, email, siparis, tarih FROM siparisler WHERE musteri_adi LIKE ?";
+    List<Trendyol> sonuc = new ArrayList<>();
+
+    try (Connection conn = dataSource.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setString(1, "%" + isim + "%");
+
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                sonuc.add(mapRow(rs));
+            }
+        }
+
+    } catch (SQLException e) {
+        throw new RuntimeException("Arama yapılırken hata oluştu", e);
+    }
+    return sonuc;
+}
+
     public Trendyol insert(Trendyol kayit) {
         String sql = "INSERT INTO siparisler (musteri_adi, email, siparis, tarih) VALUES (?, ?, ?, ?)";
 

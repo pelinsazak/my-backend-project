@@ -11,7 +11,7 @@ const glassInput = {
   '& .MuiInputLabel-root': { color: '#8F6E7E' },
 };
 
-function SiparisForm({ onSubmit, editingSiparis, onCancel }) {
+function SiparisForm({ onSubmit, editingSiparis, onCancel, errors = {} }) {
   const [form, setForm] = useState({ isim: '', email: '', siparis: '', tarih: '' });
 
   useEffect(() => {
@@ -27,7 +27,6 @@ function SiparisForm({ onSubmit, editingSiparis, onCancel }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(form);
-    setForm({ isim: '', email: '', siparis: '', tarih: '' });
   };
 
   return (
@@ -39,9 +38,17 @@ function SiparisForm({ onSubmit, editingSiparis, onCancel }) {
         border: '1px solid rgba(232,110,143,0.25)',
         boxShadow: '0 8px 32px rgba(232,110,143,0.18)',
       }}>
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center">
-        <TextField name="isim" label="İsim" value={form.isim} onChange={handleChange} required fullWidth size="small" sx={glassInput} />
-        <TextField name="email" type="email" label="Email" value={form.email} onChange={handleChange} required fullWidth size="small" sx={glassInput} />
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="flex-start">
+        <TextField
+          name="isim" label="İsim" value={form.isim} onChange={handleChange}
+          required fullWidth size="small" sx={glassInput}
+          error={!!errors.isim} helperText={errors.isim}
+        />
+        <TextField
+          name="email" type="email" label="Email" value={form.email} onChange={handleChange}
+          required fullWidth size="small" sx={glassInput}
+          error={!!errors.email} helperText={errors.email}
+        />
         <TextField name="siparis" label="Sipariş" value={form.siparis} onChange={handleChange} fullWidth size="small" sx={glassInput} />
         <TextField name="tarih" type="date" value={form.tarih} onChange={handleChange} fullWidth size="small" InputLabelProps={{ shrink: true }} sx={glassInput} />
         <Button type="submit" sx={{

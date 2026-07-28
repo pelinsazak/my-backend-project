@@ -42,6 +42,13 @@ public class TrendyolController {
         }
         return ResponseEntity.ok(mapper.toResponseDto(kayit));
     }
+    @GetMapping("/ara")
+    public List<TrendyolResponseDto> ara(@RequestParam String isim) {
+    return service.isimeGoreAra(isim)
+            .stream()
+            .map(mapper::toResponseDto)
+            .collect(Collectors.toList());
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

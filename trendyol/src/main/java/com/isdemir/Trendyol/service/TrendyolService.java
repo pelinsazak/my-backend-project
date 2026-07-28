@@ -25,6 +25,9 @@ public class TrendyolService {
     public Trendyol birTaneGetir(Long id) {
         return repository.findById(id);
     }
+    public List<Trendyol> isimeGoreAra(String isim) {
+    return repository.findByIsim(isim);
+    }
 
     public Trendyol guncelle(Trendyol kayit) {
         return repository.update(kayit);
