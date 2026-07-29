@@ -1,11 +1,11 @@
 import {
   Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, Paper, IconButton,
+  TableHead, TableRow, Paper, IconButton, TableSortLabel,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-function SiparisList({ siparisler, onEdit, onDelete }) {
+function SiparisList({ siparisler, onEdit, onDelete, sirala, yon, onSort }) {
   return (
     <TableContainer component={Paper} elevation={0} sx={{
       background: 'rgba(255,255,255,0.55)',
@@ -22,10 +22,22 @@ function SiparisList({ siparisler, onEdit, onDelete }) {
               borderBottom: '1px solid rgba(232,110,143,0.25)',
             },
           }}>
-            <TableCell>Id</TableCell>
-            <TableCell>İsim</TableCell>
+            <TableCell>
+              <TableSortLabel active={sirala === 'id'} direction={sirala === 'id' ? yon.toLowerCase() : 'asc'} onClick={() => onSort('id')}>
+                Id
+              </TableSortLabel>
+            </TableCell>
+            <TableCell>
+              <TableSortLabel active={sirala === 'musteri_adi'} direction={sirala === 'musteri_adi' ? yon.toLowerCase() : 'asc'} onClick={() => onSort('musteri_adi')}>
+                İsim
+              </TableSortLabel>
+            </TableCell>
             <TableCell>Sipariş</TableCell>
-            <TableCell>Tarih</TableCell>
+            <TableCell>
+              <TableSortLabel active={sirala === 'tarih'} direction={sirala === 'tarih' ? yon.toLowerCase() : 'asc'} onClick={() => onSort('tarih')}>
+                Tarih
+              </TableSortLabel>
+            </TableCell>
             <TableCell align="right">İşlemler</TableCell>
           </TableRow>
         </TableHead>

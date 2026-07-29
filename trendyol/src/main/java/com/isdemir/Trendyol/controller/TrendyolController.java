@@ -4,6 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.isdemir.Trendyol.dto.GuncellemeSonucuDto;
+import com.isdemir.Trendyol.dto.SayfaliSonucDto;
 import com.isdemir.Trendyol.dto.TrendyolRequestDto;
 import com.isdemir.Trendyol.dto.TrendyolResponseDto;
 import com.isdemir.Trendyol.entity.Trendyol;
@@ -26,14 +28,24 @@ public class TrendyolController {
         this.mapper = mapper;
     }
 
+   
     @GetMapping
-    public List<TrendyolResponseDto> hepsiniGetir() {
-        return service.hepsiniGetir()
-                .stream()
-                .map(mapper::toResponseDto)
-                .collect(Collectors.toList());
-    }
+    public SayfaliSonucDto hepsiniGetir(
+        @RequestParam(defaultValue = "0") int sayfa,
+        @RequestParam(defaultValue = "5") int boyut,
+        @RequestParam(defaultValue = "id") String sirala,
+        @RequestParam(defaultValue = "ASC") String yon
+) {
+    List<TrendyolResponseDto> icerik = service.sayfalamaliGetir(sayfa, boyut, sirala, yon)
+            .stream()
+            .map(mapper::toResponseDto)
+            .collect(Collectors.toList());
 
+    long toplamKayit = service.toplamKayitSayisi();
+    int toplamSayfa = (int) Math.ceil((double) toplamKayit / boyut);
+
+    return new SayfaliSonucDto(icerik, toplamKayit, toplamSayfa, sayfa);
+}
     @GetMapping("/{id}")
     public ResponseEntity<TrendyolResponseDto> birTaneGetir(@PathVariable Long id) {
         Trendyol kayit = service.birTaneGetir(id);
@@ -59,14 +71,21 @@ public class TrendyolController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TrendyolResponseDto> guncelle(@PathVariable Long id, @Valid @RequestBody TrendyolRequestDto istek) {
+    public ResponseEntity<GuncellemeSonucuDto> guncelle(@PathVariable Long id, @Valid @RequestBody TrendyolRequestDto istek) {
+
         Trendyol mevcutKayit = service.birTaneGetir(id);
         if (mevcutKayit == null) {
             return ResponseEntity.notFound().build();
         }
-        Trendyol guncellenmisHali = mapper.updateEntityFromDto(istek, mevcutKayit);
+
+        List<String> degisenAlanlar =mapper.degisenAlanlariBul(istek,mevcutKayit);
+
+        Trendyol guncellenmisHali=mapper.updateEntityFromDto(istek, mevcutKayit);
         Trendyol guncellenen = service.guncelle(guncellenmisHali);
-        return ResponseEntity.ok(mapper.toResponseDto(guncellenen));
+        TrendyolResponseDto responseDto=mapper.toResponseDto(guncellenen);
+        GuncellemeSonucuDto sonuc= new GuncellemeSonucuDto(responseDto, degisenAlanlar);
+
+        return ResponseEntity.ok(sonuc);
     }
 
     @DeleteMapping("/{id}")

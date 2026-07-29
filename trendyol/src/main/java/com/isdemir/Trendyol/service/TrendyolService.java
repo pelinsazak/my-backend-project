@@ -25,9 +25,6 @@ public class TrendyolService {
     public Trendyol birTaneGetir(Long id) {
         return repository.findById(id);
     }
-    public List<Trendyol> isimeGoreAra(String isim) {
-    return repository.findByIsim(isim);
-    }
 
     public Trendyol guncelle(Trendyol kayit) {
         return repository.update(kayit);
@@ -35,5 +32,17 @@ public class TrendyolService {
 
     public void sil(Long id) {
         repository.deleteById(id);
+    }
+
+    public List<Trendyol> isimeGoreAra(String isim) {
+        return repository.findByIsim(isim);
+    }
+
+    public List<Trendyol> sayfalamaliGetir(int sayfa, int boyut, String sirala, String yon) {
+        return repository.findAllPaged(sayfa, boyut, sirala, yon);
+    }
+
+    public long toplamKayitSayisi() {
+        return repository.countAll();
     }
 }

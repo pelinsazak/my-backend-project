@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class TrendyolRepository {
@@ -132,7 +133,50 @@ public class TrendyolRepository {
             ps.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Kayıt silinirken hata oluştu", e);
+            throw new RuntimeException("Kayit silinirken hata oluştu", e);
+        }
+    }
+    public List<Trendyol> findAllPaged(int sayfa, int boyut, String sirala, String yon) {
+        Set<String> izinliSutunlar = Set.of("id", "musteri_adi", "tarih");
+        String kolon = izinliSutunlar.contains(sirala) ? sirala : "id";
+        String siralamaYonu = "DESC".equalsIgnoreCase(yon) ? "DESC" : "ASC";
+
+        String sql = "SELECT id, musteri_adi, email, siparis, tarih FROM siparisler "
+                   + "ORDER BY " + kolon + " " + siralamaYonu + " "
+                   + "LIMIT ? OFFSET ?";
+
+        List<Trendyol> sonuc = new ArrayList<>();
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, boyut);
+            ps.setInt(2, sayfa * boyut);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    sonuc.add(mapRow(rs));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Sayfalı liste getirilirken hata oluştu", e);
+        }
+        return sonuc;
+    }
+
+    public long countAll() {
+        String sql = "SELECT COUNT(*) FROM siparisler";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            rs.next();
+            return rs.getLong(1);
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Kayıt sayısı alınırken hata oluştu", e);
         }
     }
 

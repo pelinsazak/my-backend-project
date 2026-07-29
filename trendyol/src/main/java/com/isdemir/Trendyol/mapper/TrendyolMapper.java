@@ -4,6 +4,9 @@ import com.isdemir.Trendyol.dto.TrendyolRequestDto;
 import com.isdemir.Trendyol.dto.TrendyolResponseDto;
 import com.isdemir.Trendyol.entity.Trendyol;
 import org.springframework.stereotype.Component;
+import java.util.List;
+import java.util.Objects;
+import java.util.ArrayList;
 
 @Component
 public class TrendyolMapper {
@@ -19,9 +22,28 @@ public class TrendyolMapper {
         entity.getSiparis(),
         entity.getTarih()
       );
-  }
+    }
 
   public Trendyol updateEntityFromDto(TrendyolRequestDto dto, Trendyol mevcut) {
     return new Trendyol(mevcut.getId(), dto.getIsim(), dto.getEmail(), dto.getTarih(), dto.getSiparis());
   }
+
+  public List<String> degisenAlanlariBul(TrendyolRequestDto dto,Trendyol mevcut){
+  List<String>degisenler= new ArrayList<>();
+
+  if (!Objects.equals(dto.getIsim(),mevcut.getIsim())){
+    degisenler.add("isim");
+
+  }
+if (!Objects.equals(dto.getEmail(),mevcut.getEmail())){
+  degisenler.add("email");
 }
+if (!Objects.equals(dto.getSiparis(),mevcut.getSiparis())){
+  degisenler.add("Siparis");}
+
+  if(!Objects.equals(dto.getTarih(),mevcut.getTarih())){
+    degisenler.add("tarhih");
+  }
+
+return degisenler;
+}}

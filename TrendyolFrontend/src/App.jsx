@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Container, Typography, Box } from '@mui/material';
+import { Container, Typography, Box, Pagination, Stack } from '@mui/material';
 import { getAllSiparisler, createSiparis, updateSiparis, deleteSiparis, searchSiparisler } from './api/siparisApi';
 import SiparisForm from './components/SiparisForm';
 import SiparisList from './components/SiparisList';
@@ -11,27 +11,30 @@ function App() {
   const [aramaMetni, setAramaMetni] = useState('');
   const [formErrors, setFormErrors] = useState({});
 
+  const [sayfa, setSayfa] = useState(0);
+  const [boyut] = useState(5);
+  const [sirala, setSirala] = useState('id');
+  const [yon, setYon] = useState('ASC');
+  const [toplamSayfa, setToplamSayfa] = useState(1);
+
   const fetchSiparisler = async () => {
-    const response = await getAllSiparisler();
-    setSiparisler(response.data);
+    if (aramaMetni.trim() === '') {
+      const response = await getAllSiparisler({ sayfa, boyut, sirala, yon });
+      setSiparisler(response.data.icerik);
+      setToplamSayfa(response.data.toplamSayfa || 1);
+    } else {
+      const response = await searchSiparisler(aramaMetni);
+      setSiparisler(response.data);
+      setToplamSayfa(1);
+    }
   };
 
   useEffect(() => {
-    fetchSiparisler();
-  }, []);
-
-  useEffect(() => {
-    const gecikme = setTimeout(async () => {
-      if (aramaMetni.trim() === '') {
-        fetchSiparisler();
-      } else {
-        const response = await searchSiparisler(aramaMetni);
-        setSiparisler(response.data);
-      }
+    const gecikme = setTimeout(() => {
+      fetchSiparisler();
     }, 400);
-
     return () => clearTimeout(gecikme);
-  }, [aramaMetni]);
+  }, [sayfa, sirala, yon, aramaMetni]);
 
   const handleSubmit = async (form) => {
     try {
@@ -53,6 +56,16 @@ function App() {
   const handleDelete = async (id) => {
     await deleteSiparis(id);
     fetchSiparisler();
+  };
+
+  const handleSort = (kolon) => {
+    if (sirala === kolon) {
+      setYon(yon === 'ASC' ? 'DESC' : 'ASC');
+    } else {
+      setSirala(kolon);
+      setYon('ASC');
+    }
+    setSayfa(0);
   };
 
   return (
@@ -88,13 +101,34 @@ function App() {
           errors={formErrors}
         />
 
-        <AramaKutusu value={aramaMetni} onChange={setAramaMetni} />
+        <AramaKutusu value={aramaMetni} onChange={(deger) => { setAramaMetni(deger); setSayfa(0); }} />
 
         <SiparisList
           siparisler={siparisler}
           onEdit={setEditingSiparis}
           onDelete={handleDelete}
+          sirala={sirala}
+          yon={yon}
+          onSort={handleSort}
         />
+
+        {aramaMetni.trim() === '' && (
+          <Stack alignItems="center" sx={{ mt: 3 }}>
+            <Pagination
+              count={toplamSayfa}
+              page={sayfa + 1}
+              onChange={(e, deger) => setSayfa(deger - 1)}
+              shape="rounded"
+              sx={{
+                '& .MuiPaginationItem-root': { color: 'text.primary' },
+                '& .Mui-selected': {
+                  background: 'linear-gradient(135deg, #E86E8F, #A97EE0) !important',
+                  color: '#FFFFFF',
+                },
+              }}
+            />
+          </Stack>
+        )}
       </Container>
     </Box>
   );
