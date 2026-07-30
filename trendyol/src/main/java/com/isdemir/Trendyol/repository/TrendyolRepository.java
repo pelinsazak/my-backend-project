@@ -1,5 +1,7 @@
 package com.isdemir.Trendyol.repository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.isdemir.Trendyol.entity.Trendyol;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
@@ -11,7 +13,7 @@ import java.util.Set;
 
 @Repository
 public class TrendyolRepository {
-
+    private final Logger logger = LoggerFactory.getLogger(TrendyolRepository.class);
     private final DataSource dataSource;
 
     public TrendyolRepository(DataSource dataSource) {
@@ -19,6 +21,8 @@ public class TrendyolRepository {
     }
 
     public List<Trendyol> findAll() {
+        logger.debug("Tüm siparişler getiriliyor.");
+
         String sql = "SELECT id, musteri_adi, email, siparis, tarih FROM siparisler";
         List<Trendyol> sonuc = new ArrayList<>();
 
@@ -78,6 +82,9 @@ public class TrendyolRepository {
 }
 
     public Trendyol insert(Trendyol kayit) {
+        logger.info("Yeni sipariş kaydediliyor: isim= {} , sipariş={}",kayit.getIsim() , kayit.getSiparis());
+
+
         String sql = "INSERT INTO siparisler (musteri_adi, email, siparis, tarih) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = dataSource.getConnection();
@@ -104,6 +111,8 @@ public class TrendyolRepository {
     }
 
     public Trendyol update(Trendyol kayit) {
+        logger.info("Sipariş güncelleniyor: id={}",kayit.getId());
+
         String sql = "UPDATE siparisler SET musteri_adi = ?, email = ?, siparis = ?, tarih = ? WHERE id = ?";
 
         try (Connection conn = dataSource.getConnection();
@@ -124,6 +133,8 @@ public class TrendyolRepository {
     }
 
     public void deleteById(Long id) {
+        logger.warn("Seçilen sipariş siliniyor:i id{}",id);
+
         String sql = "DELETE FROM siparisler WHERE id = ?";
 
         try (Connection conn = dataSource.getConnection();
