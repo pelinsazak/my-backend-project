@@ -111,9 +111,10 @@ public class TrendyolRepository {
     }
 
     public Trendyol update(Trendyol kayit) {
-        if(kayit==null){
+        if(kayit.getIsim()==null || kayit.getIsim().trim().isEmpty() ||
+           kayit.getEmail()==null|| kayit.getEmail().trim().isEmpty()){
         logger.warn("Kullanici eksik alan girdi.");
-        throw new IllegalArgumentException("kayit bos olamaz!");  
+        throw new IllegalArgumentException("isim bos olamaz!");  
          }
         
         logger.info("Sipariş güncelleniyor: id={}",kayit.getId());
