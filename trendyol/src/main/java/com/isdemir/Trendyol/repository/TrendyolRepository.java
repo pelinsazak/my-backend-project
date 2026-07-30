@@ -56,7 +56,7 @@ public class TrendyolRepository {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Kayıt getirilirken hata oluştu", e);
+            throw new RuntimeException("Kayit getirilirken hata oluştu", e);
         }
     }
 
@@ -76,7 +76,7 @@ public class TrendyolRepository {
         }
 
     } catch (SQLException e) {
-        throw new RuntimeException("Arama yapılırken hata oluştu", e);
+        throw new RuntimeException("Arama yapilirken hata oluştu", e);
     }
     return sonuc;
 }
@@ -111,8 +111,13 @@ public class TrendyolRepository {
     }
 
     public Trendyol update(Trendyol kayit) {
+        if(kayit==null){
+        logger.warn("Kullanici eksik alan girdi.");
+        throw new IllegalArgumentException("kayit bos olamaz!");  
+         }
+        
         logger.info("Sipariş güncelleniyor: id={}",kayit.getId());
-
+        
         String sql = "UPDATE siparisler SET musteri_adi = ?, email = ?, siparis = ?, tarih = ? WHERE id = ?";
 
         try (Connection conn = dataSource.getConnection();
@@ -128,7 +133,7 @@ public class TrendyolRepository {
             return kayit;
 
         } catch (SQLException e) {
-            throw new RuntimeException("Kayıt güncellenirken hata oluştu", e);
+            throw new RuntimeException("Kayit güncellenirken hata oluştu", e);
         }
     }
 
